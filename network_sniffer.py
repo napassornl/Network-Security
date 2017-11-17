@@ -1,3 +1,17 @@
+"""
+This script parses a message sent to the socket of the source, and compares
+its IP packet with a white list consisting of BU's networks, and flags them
+as safe if in the white list and unsafe otherwise.
+
+For parsing a message, the information is printe and its IP packet is stored as
+an IPv4 address object. The script reads the whitelist and stores the elements
+in an array of strings. To compare if an incoming packet is safe, the script
+converts each string element to an IPv4 network object.
+
+This is assuming that the whitelist consists of only network address or IP
+address range, but will need to account for individual IP addresses as well.
+"""
+
 # Need to run program through Admin command line
 import socket
 import sys
@@ -120,7 +134,7 @@ destAddress = socket.inet_ntoa(unpackedData[9])
 
 print("An IP packet with size %i was captured" % (totalLength))
 print("Raw Data: " + str(data))
-print("\nParsed data")
+print("\nParsed data: ")
 print("Version: \t\t" + str(version))
 print("Header Length:\t\t" + str(IHL*4) + " bytes")
 print("Type of Service:\t" + str(getTOS(TOS)))
@@ -137,6 +151,9 @@ print("Destination:\t\t" + destAddress)
 
 # IPv4Address object
 print("*****************************************************")
+print("")
+print("Data from IPv4 objects: ")
+
 IPv4source = ipaddress.ip_address(sourceAddress) # IPv4address object
 IPv4dest = ipaddress.ip_address(destAddress)
 print("Version: \t\t" + str(IPv4source.version))
@@ -151,19 +168,29 @@ print("Destination's network: \t" + destNetwork.with_netmask)
 # print ("Source hosts: ")
 # for host in shosts:
 #     print("\t\t\t" + int(host))
-whiteList = list(ipaddress.ip_network('155.41.80.0/21').hosts())
-for ip in whiteList:
-    print(str(ip))
-# ipaddress.ip_network('155.41.88.0/22'),
-# ipaddress.ip_network('155.41.92.0/23')])
-for ip in list([IPv4source, IPv4dest]):
- if ip in whiteList:
-     print(str(ip) + " is safe.")
- else:
-     print(str(ip) + " is flagged as not safe.")
 
 
+print("********************************************")
+# open the whitelist to compare packets
+wl = open('WHITELIST.txt',"r")
+white = wl.readlines()
+whiteList = []
 
+# store whiteList networks in array - assuming all are networks
+print("The whitelist consists of: ")
+for i in range(len(white)):
+    print(white[i].strip('\n'))
+    whiteList.append(white[i].strip('\n'))
+
+print("")
+
+for net in whiteList:
+# check incoming packets
+    if IPv4dest in ipaddress.ip_network(net):
+        print(str(IPv4dest) + " is safe.")
+        break
+    if net == whiteList[len(whiteList)-1]:
+        print(str(IPv4dest) + " is flagged as not safe.")
 
 # disabled promiscuous mode
 s.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
