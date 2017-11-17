@@ -1,4 +1,5 @@
 """"
+Copyright jdchambo@bu.edu
 
 Gets input from user, in form of CIDR blocks, to use to generate whitelist
 for network monitoring. After receiving input, checks that address represents a
