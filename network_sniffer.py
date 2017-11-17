@@ -1,7 +1,7 @@
 """
 Copyright napalerd@bu.edu
 
-This script parses a message sent to the socket of the source, and compares
+This script continuously parses a message sent to the socket of the source, and compares
 its IP packet with a white list consisting of BU's networks, and flags them
 as safe if in the white list and unsafe otherwise.
 
