@@ -1,4 +1,6 @@
 """
+Copyright napalerd@bu.edu
+
 This script parses a message sent to the socket of the source, and compares
 its IP packet with a white list consisting of BU's networks, and flags them
 as safe if in the white list and unsafe otherwise.
@@ -10,6 +12,8 @@ converts each string element to an IPv4 network object.
 
 This is assuming that the whitelist consists of only network address or IP
 address range, but will need to account for individual IP addresses as well.
+
+written in python 3.5.2
 """
 
 # Need to run program through Admin command line
