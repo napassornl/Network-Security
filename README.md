@@ -1,2 +1,2 @@
 # Network-Security
-This is a project for the Computer Networking class.
+This is a group project for the Computer Networking class.
