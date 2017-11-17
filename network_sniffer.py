@@ -22,6 +22,7 @@ import sys
 import struct
 import re # regular expression
 import ipaddress
+import time
 
 
 # receive data from socket
@@ -99,102 +100,113 @@ def getProtocol(protocolNo):
 # the public network interface
 HOST = socket.gethostbyname(socket.gethostname())
 
-# create a raw socket and bind it to the public interface
-s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_IP)
-s.bind((HOST, 0))
+try:
+    while True:
+        # create a raw socket and bind it to the public interface
+        s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_IP)
+        s.bind((HOST, 0))
 
-# Include IP headers
-s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+        # Include IP headers
+        s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
 
-# receive all packages
-s.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
+        # receive all packages
+        s.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
 
-# receive a package from socket
-data = receiveData(s)
-# unpack ip header
-unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
-#print(unpackedData)
-# B size is 1 byte = 8 bits - gets Version + Internet Header Length +Services
-# H size is 2 bytes = 16 bits - gets total length
+        print("Monitoring ...")
+        time.sleep(5)
 
-# parse ip header - 32 bits long
-version_IHL = unpackedData[0]
-#print(version_IHL)
-version = version_IHL >> 4 # shifts by 4 to get version - ip = 4
-# print(version)
-IHL = version_IHL & 0xF # min values is 5 ; 0xF is hexidecimal
-# print(IHL)
-TOS = unpackedData[1]
-totalLength = unpackedData[2]
-ID = unpackedData[3]
-flags = unpackedData[4]
-fragmentOffset = unpackedData[4] & 0x1FF
-# get time to leave
-TTL = unpackedData[5]
-protocolNo = unpackedData[6]
-checksum = unpackedData[7]
-sourceAddress = socket.inet_ntoa(unpackedData[8]) # converts IPv4 address to 32-bit pack binary format
-destAddress = socket.inet_ntoa(unpackedData[9])
+        # receive a package from socket
+        data = receiveData(s)
+        # unpack ip header
+        unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
+        #print(unpackedData)
+        # B size is 1 byte = 8 bits - gets Version + Internet Header Length +Services
+        # H size is 2 bytes = 16 bits - gets total length
 
-print("An IP packet with size %i was captured" % (totalLength))
-print("Raw Data: " + str(data))
-print("\nParsed data: ")
-print("Version: \t\t" + str(version))
-print("Header Length:\t\t" + str(IHL*4) + " bytes")
-print("Type of Service:\t" + str(getTOS(TOS)))
-print("Length:\t\t\t" + str(totalLength))
-print("ID:\t\t\t" + str(hex(ID)) + " (" + str(ID) + ") ")
-#print("Flags:\t\t\t" + str(getFlags(flags)))
-print("Fragment offset:\t" + str(fragmentOffset))
-print("TTL:\t\t\t" + str(TTL))
-print("Protocol:\t\t" + getProtocol(protocolNo))
-print("Checksum:\t\t" + str(checksum))
-print("Source:\t\t\t" + sourceAddress)
-print("Destination:\t\t" + destAddress)
-#print("Payload:\n" + str(hex(data[20:])))
-
-# IPv4Address object
-print("*****************************************************")
-print("")
-print("Data from IPv4 objects: ")
-
-IPv4source = ipaddress.ip_address(sourceAddress) # IPv4address object
-IPv4dest = ipaddress.ip_address(destAddress)
-print("Version: \t\t" + str(IPv4source.version))
-print("Source:\t\t\t" + str(IPv4source))
-print("Destination:\t\t" + str(IPv4dest))
-sourceNetwork = ipaddress.IPv4Network(str(IPv4source))
-print("Source's network: \t" + sourceNetwork.with_netmask)
-destNetwork = ipaddress.IPv4Network(str(IPv4dest))
-print("Destination's network: \t" + destNetwork.with_netmask)
-# print("Total addresses in dest network: "+ str(destNetwork.num_addresses))
-# shosts = list(destNetwork.hosts())
-# print ("Source hosts: ")
-# for host in shosts:
-#     print("\t\t\t" + int(host))
+        # parse ip header - 32 bits long
+        version_IHL = unpackedData[0]
+        #print(version_IHL)
+        version = version_IHL >> 4 # shifts by 4 to get version - ip = 4
+        # print(version)
+        IHL = version_IHL & 0xF # min values is 5 ; 0xF is hexidecimal
+        # print(IHL)
+        TOS = unpackedData[1]
+        totalLength = unpackedData[2]
+        ID = unpackedData[3]
+        flags = unpackedData[4]
+        fragmentOffset = unpackedData[4] & 0x1FF
+        # get time to leave
+        TTL = unpackedData[5]
+        protocolNo = unpackedData[6]
+        checksum = unpackedData[7]
+        sourceAddress = socket.inet_ntoa(unpackedData[8]) # converts IPv4 address to 32-bit pack binary format
+        destAddress = socket.inet_ntoa(unpackedData[9])
 
 
-print("********************************************")
-# open the whitelist to compare packets
-wl = open('WHITELIST.txt',"r")
-white = wl.readlines()
-whiteList = []
 
-# store whiteList networks in array - assuming all are networks
-print("The whitelist consists of: ")
-for i in range(len(white)):
-    print(white[i].strip('\n'))
-    whiteList.append(white[i].strip('\n'))
+        print("An IP packet with size %i was captured" % (totalLength))
+        print("Raw Data: " + str(data))
+        print("\nParsed data: ")
+        print("Version: \t\t" + str(version))
+        print("Header Length:\t\t" + str(IHL*4) + " bytes")
+        print("Type of Service:\t" + str(getTOS(TOS)))
+        print("Length:\t\t\t" + str(totalLength))
+        print("ID:\t\t\t" + str(hex(ID)) + " (" + str(ID) + ") ")
+        #print("Flags:\t\t\t" + str(getFlags(flags)))
+        print("Fragment offset:\t" + str(fragmentOffset))
+        print("TTL:\t\t\t" + str(TTL))
+        print("Protocol:\t\t" + getProtocol(protocolNo))
+        print("Checksum:\t\t" + str(checksum))
+        print("Source:\t\t\t" + sourceAddress)
+        print("Destination:\t\t" + destAddress)
+        #print("Payload:\n" + str(hex(data[20:])))
 
-print("")
+        # IPv4Address object
+        print("*****************************************************")
+        print("")
+        print("Data from IPv4 objects: ")
 
-for net in whiteList:
-# check incoming packets
-    if IPv4dest in ipaddress.ip_network(net):
-        print(str(IPv4dest) + " is safe.")
-        break
-    if net == whiteList[len(whiteList)-1]:
-        print(str(IPv4dest) + " is flagged as not safe.")
+        IPv4source = ipaddress.ip_address(sourceAddress) # IPv4address object
+        IPv4dest = ipaddress.ip_address(destAddress)
+        print("Version: \t\t" + str(IPv4source.version))
+        print("Source:\t\t\t" + str(IPv4source))
+        print("Destination:\t\t" + str(IPv4dest))
+        sourceNetwork = ipaddress.IPv4Network(str(IPv4source))
+        print("Source's network: \t" + sourceNetwork.with_netmask)
+        destNetwork = ipaddress.IPv4Network(str(IPv4dest))
+        print("Destination's network: \t" + destNetwork.with_netmask)
+        # print("Total addresses in dest network: "+ str(destNetwork.num_addresses))
+        # shosts = list(destNetwork.hosts())
+        # print ("Source hosts: ")
+        # for host in shosts:
+        #     print("\t\t\t" + int(host))
 
-# disabled promiscuous mode
-s.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
+
+        print("********************************************")
+        # open the whitelist to compare packets
+        wl = open('WHITELIST.txt',"r")
+        white = wl.readlines()
+        whiteList = []
+
+        # store whiteList networks in array - assuming all are networks
+        print("The whitelist consists of: ")
+        for i in range(len(white)):
+            print(white[i].strip('\n'))
+            whiteList.append(white[i].strip('\n'))
+
+        print("")
+
+        for net in whiteList:
+        # check incoming packets
+            if IPv4dest in ipaddress.ip_network(net):
+                print(str(IPv4dest) + " is safe.")
+                break
+            if net == whiteList[len(whiteList)-1]:
+                print(str(IPv4dest) + " is flagged as not safe.")
+
+        # disabled promiscuous mode
+        s.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
+        print(" ")
+
+except KeyboardInterrupt:
+    pass
