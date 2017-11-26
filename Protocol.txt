@@ -141,7 +141,7 @@ MOSPF, Multicast Open Shortest Path First.
 139 HIP, Host Identity Protocol.
 140 Shim6, Level 3 Multihoming Shim Protocol for IPv6.
 141 WESP, Wrapped Encapsulating Security Payload.
-142 ROHC, RObust Header Compression.
+142 ROHC, Robust Header Compression.
 253 Experimentation and testing.
 254 Experimentation and testing.
 255 reserved.

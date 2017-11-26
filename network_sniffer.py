@@ -6,12 +6,9 @@ its IP packet with a white list consisting of BU's networks, and flags them
 as safe if in the white list and unsafe otherwise.
 
 For parsing a message, the information is printe and its IP packet is stored as
-an IPv4 address object. The script reads the whitelist and stores the elements
+an IPv4 address object (assuming all packets are version 4). The script reads the whitelist and stores the elements
 in an array of strings. To compare if an incoming packet is safe, the script
 converts each string element to an IPv4 network object.
-
-This is assuming that the whitelist consists of only network address or IP
-address range, but will need to account for individual IP addresses as well.
 
 written in python 3.5.2
 """
@@ -143,7 +140,7 @@ try:
         destAddress = socket.inet_ntoa(unpackedData[9])
 
 
-
+        # next time save as a file
         print("An IP packet with size %i was captured" % (totalLength))
         print("Raw Data: " + str(data))
         print("\nParsed data: ")
@@ -175,11 +172,6 @@ try:
         print("Source's network: \t" + sourceNetwork.with_netmask)
         destNetwork = ipaddress.IPv4Network(str(IPv4dest))
         print("Destination's network: \t" + destNetwork.with_netmask)
-        # print("Total addresses in dest network: "+ str(destNetwork.num_addresses))
-        # shosts = list(destNetwork.hosts())
-        # print ("Source hosts: ")
-        # for host in shosts:
-        #     print("\t\t\t" + int(host))
 
 
         print("********************************************")
@@ -199,10 +191,10 @@ try:
         for net in whiteList:
         # check incoming packets
             if IPv4dest in ipaddress.ip_network(net):
-                print(str(IPv4dest) + " is safe.")
+                print(str(IPv4source) + " is safe.")
                 break
             if net == whiteList[len(whiteList)-1]:
-                print(str(IPv4dest) + " is flagged as not safe.")
+                print(str(IPv4source) + " is flagged as not safe.")
 
         # disabled promiscuous mode
         s.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
