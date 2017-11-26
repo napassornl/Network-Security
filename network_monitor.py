@@ -20,7 +20,6 @@ import sys
 import struct
 import re # regular expression
 import ipaddress
-import time
 
 """The goal of this function is to obtain the IP packet from the socket. The data
 is in a tuple form, ie. (b'E\x00\x00)b-@\x00\x80\x06\xde\xb9\x9b)!\xa24,\xc8\xf0\xcb\x9d\x01\xbbE
