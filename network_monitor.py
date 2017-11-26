@@ -3,8 +3,9 @@ Copyright napalerd@bu.edu
 
 This script continuously parses a IP packet sent to the socket of the source, and compares
 its IP header toith a white list consisting of BU's networks, and flags them
-as safe if in the white list and unsafe otherwise. The result is printed in a file
-in the following form (space delimited):
+as safe if in the white list and unsafe otherwise. The result is printed in two files
+either SAFEPACKETS.txt or UNSAFEPACKETS.txt depending on its match in the whitelist.
+Here is the text form (space delimited):
 
 Source_IP Dest_IP Protocol DSCP_Precedence DSCP_delay DSCP_throughput DSCP_reliability DSCP_cost \n
 
