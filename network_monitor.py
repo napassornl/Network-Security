@@ -58,9 +58,10 @@ def getTOS(data): # 8 bits
     M >>1
 
     try:
-        TOS = precedence[data >> 5] + " " + delay[D] + " " + throughput[T] + " " + reliability[R] + " " + cost[M]
+        #TOS = precedence[data >> 5] + " " + delay[D] + " " + throughput[T] + " " + reliability[R] + " " + cost[M]
+        TOS = str(data >> 5) + " " + str(D) + " " + str(T) + " " + str(R) + " " + str(M)
     except:
-        TOS = "N/A" + " " + "N/A" + " " + "N/A" + " " + "N/A" + " " + "N/A"
+        TOS = str(-1) + " " + str(-1) + " " + str(-1) + " " + str(-1) + " " + str(-1)
     return TOS
 
 """The goal of this function is to parse for the type of transport Layer
@@ -75,10 +76,8 @@ def getProtocol(protocolNo):
         protocol = protocol[0]
         protocol = protocol.replace("\n","")
         protocol = protocol.replace(str(protocolNo),"")
-        protocol = protocol.replace(" ","")
         protocol = protocol.replace(".","")
         protocol = protocol.lstrip()
-
         return protocol
     else:
         return "N/A"
@@ -134,11 +133,11 @@ try:
         # check incoming packets to whitelist
             if IPv4source in ipaddress.ip_network(net):
                 print(str(IPv4source) + " is safe.")
-                safe.write(str(IPv4source)+ " " +str(IPv4dest)+ " " +getProtocol(protocolNo)+ " "+str(getTOS(TOS)) + "\n" )
+                safe.write(str(IPv4source)+ " " +str(IPv4dest)+ " " +str(protocolNo)+ " "+ getTOS(TOS) + "\n" )
                 break
             if net == whiteList[len(whiteList)-1]:
                 print(str(IPv4source) + " is not safe.")
-                unsafe.write(str(IPv4source)+ " " +str(IPv4dest)+ " " +getProtocol(protocolNo)+ " "+str(getTOS(TOS)) + "\n" )
+                unsafe.write(str(IPv4source)+ " " +str(IPv4dest)+ " " +str(protocolNo)+ " "+ getTOS(TOS) + "\n" )
 
         # disabled promiscuous mode
         s.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
