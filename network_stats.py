@@ -64,7 +64,7 @@ def updates(srcip, tarip, values, summary, detail):
     detail[srcip][tarip]['min cost'] += 1
 
 
-def printdetails(ipaddr, detail)
+def printdetails(ipaddr, detail):
    """
    print detailed information for the specified ipaddress
    ipaddr - user supplied source IP address
