@@ -2,7 +2,7 @@
 Copyright napalerd@bu.edu
 
 This script continuously parses a IP packet sent to the socket of the source, and compares
-its IP header toith a white list consisting of BU's networks, and flags them
+its IP header to the a white list, and flags them
 as safe if in the white list and unsafe otherwise. The result is printed in two files
 either SAFEPACKETS.txt or UNSAFEPACKETS.txt depending on its match in the whitelist.
 Here is the text form (space delimited):
