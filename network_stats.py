@@ -147,7 +147,10 @@ if (sys.argv[1] == 'B' or sys.argv[1] == 'A'):
   blOthers = 0;
   print("Statistics from blacklisted IPs\nSource IP|Source Host|# msgs|% HTTPS|% HTTP|% Other")
   for blsrcip in blacklist:
-    blsrchst = socket.gethostbyaddr(blsrcip)[0]
+    try:
+      blsrchst = socket.gethostbyaddr(blsrcip)[0]
+    except:
+      blsrchst = "Unknown Host"
     msg = summary[blsrcip]['msg']
     HTTPS = summary[blsrcip]['HTTPS']
     HTTP = summary[blsrcip]['HTTP']
@@ -169,7 +172,10 @@ if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
   wlOthers = 0;
   print("Statistics from whitelisted IPs\nSource IP|Source Host|# msgs|% HTTPS|% HTTP|% Other")
   for wlsrcip in whitelist:
-    wlsrchst = socket.gethostbyaddr(wlsrcip)[0]
+    try:
+      wlsrchst = socket.gethostbyaddr(wlsrcip)[0]
+    except:
+      wlsrchst = "Unknown Host"
     msg = summary[wlsrcip]['msg']
     HTTPS = summary[wlsrcip]['HTTPS']
     HTTP = summary[wlsrcip]['HTTP']
