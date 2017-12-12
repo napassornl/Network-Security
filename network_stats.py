@@ -30,11 +30,11 @@ def updates(srcip, tarip, values, summary, detail):
   summary[srcip]['msg'] += 1
   detail[srcip][tarip]['msg'] += 1
   # protocol
-  if values[2] == 56:
+  if values[2] == '56':
     # using TLS (HTTPS)
     summary[srcip]['HTTPS'] += 1
     detail[srcip][tarip]['HTTPS'] += 1
-  elif (values[2] == 6 or values[2] == 17):
+  elif (values[2] == '6' or values[2] == '17'):
     # using TCP or UDP (HTTP)
     summary[srcip]['HTTP'] += 1
     detail[srcip][tarip]['HTTP'] += 1
@@ -43,23 +43,23 @@ def updates(srcip, tarip, values, summary, detail):
     summary[srcip]['Other'] += 1
     detail[srcip][tarip]['Other'] += 1
   # Precendence
-  if values[3] != 0:
+  if values[3] != '0':
     # Precedence is anything other than Routine
     detail[srcip][tarip]['non-routine'] += 1
   # Delay
-  if values[4] == 1:
+  if values[4] == '1':
     # Low Delay is set
     detail[srcip][tarip]['low delay'] += 1
   # Throughput
-  if values[5] == 1:
+  if values[5] == '1':
     # High Throughput is set
     detail[srcip][tarip]['high tp'] += 1
   # Reliability
-  if values[6] == 1:
+  if values[6] == '1':
     # high reliability is set
     detail[srcip][tarip]['high reliable'] += 1 
   # Cost
-  if values[7] == 1:
+  if values[7] == '1':
     # minimum cost is set
     detail[srcip][tarip]['min cost'] += 1
 
@@ -124,7 +124,7 @@ if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
   for line in safe.readlines():
     values = line.split()
     srcip = values[0]
-    tarip = values[0]
+    tarip = values[1]
     if values[0] not in whitelist:
       whitelist.append(values[0])
       summary[srcip] = {'msg': 0, 'HTTPS': 0, 'HTTP': 0, 'Other': 0}
