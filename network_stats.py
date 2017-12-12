@@ -3,7 +3,7 @@ network_stats.py
 Copyright: jdchambo@bu.edu
 
 Takes input from whitelist and/or blacklist statistics collected
-in network monitoring, and prints to screen depending on user 
+in network monitoring, and prints to screen depending on user
 selections for what to display.
 
 Expects user to enter W for whitelist reporting, B for blacklist
@@ -57,7 +57,7 @@ def updates(srcip, tarip, values, summary, detail):
   # Reliability
   if values[6] == 1:
     # high reliability is set
-    detail[srcip][tarip]['high reliable'] += 1 
+    detail[srcip][tarip]['high reliable'] += 1
   # Cost
   if values[7] == 1:
     # minimum cost is set
@@ -88,7 +88,7 @@ def printdetails(ipaddr, detail):
 """
 Open files and read into structures
 file data stored as space delimited list:
-Source_IP Dest_IP Protocol DSCP_Precedence DSCP_delay DSCP_throughput DSCP_reliability DSCP_cost 
+Source_IP Dest_IP Protocol DSCP_Precedence DSCP_delay DSCP_throughput DSCP_reliability DSCP_cost
 """
 
 # lists of IPs
@@ -156,7 +156,7 @@ if (sys.argv[1] == 'B'):
     blHTTPS += HTTPS
     blHTTP += HTTP
     blOthers += Other
-  s = 'Total|' + bltotal + '|' + blHTTPS/bltotal + '|' blHTTP/msg + '|' + Other/msg
+  s = 'Total|' + bltotal + '|' + blHTTPS/bltotal + '|'+ blHTTP/msg + '|' + Other/msg
   print(s)
   print('\n')
 
@@ -178,7 +178,7 @@ if (sys.argv[1] == 'W'):
     wlHTTPS += HTTPS
     wlHTTP += HTTP
     wlOthers += Other
-  s = 'Total|' + wltotal + '|' + wlHTTPS/bltotal + '|' wlHTTP/msg + '|' + Other/msg
+  s = 'Total|' + wltotal + '|' + wlHTTPS/bltotal + '|'+ wlHTTP/msg + '|' + Other/msg
   print(s)
   print('\n')
 
@@ -200,7 +200,7 @@ Protocol num (TCP,UDP,TLS, or other)
 DSCP field values (precedence, delay, throughput, reliability, cost)
 """
 
-while True
+while True:
   addr = input("Enter IP address for additional information, or Enter to exit:")
   if addr == '':
     break
@@ -210,5 +210,3 @@ while True
     printdetails(addr, detail)
   else:
     print("\nInvalid input, please try again\n")
-  
-
