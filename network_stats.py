@@ -3,7 +3,7 @@ network_stats.py
 Copyright: jdchambo@bu.edu
 
 Takes input from whitelist and/or blacklist statistics collected
-in network monitoring, and prints to screen depending on user
+in network monitoring, and prints to screen depending on user 
 selections for what to display.
 
 Expects user to enter W for whitelist reporting, B for blacklist
@@ -57,7 +57,7 @@ def updates(srcip, tarip, values, summary, detail):
   # Reliability
   if values[6] == '1':
     # high reliability is set
-    detail[srcip][tarip]['high reliable'] += 1
+    detail[srcip][tarip]['high reliable'] += 1 
   # Cost
   if values[7] == '1':
     # minimum cost is set
@@ -88,7 +88,7 @@ def printdetails(ipaddr, detail):
 """
 Open files and read into structures
 file data stored as space delimited list:
-Source_IP Dest_IP Protocol DSCP_Precedence DSCP_delay DSCP_throughput DSCP_reliability DSCP_cost
+Source_IP Dest_IP Protocol DSCP_Precedence DSCP_delay DSCP_throughput DSCP_reliability DSCP_cost 
 """
 
 # lists of IPs
@@ -161,8 +161,11 @@ if (sys.argv[1] == 'B' or sys.argv[1] == 'A'):
     blHTTPS += HTTPS
     blHTTP += HTTP
     blOthers += Other
-  s = 'Total|' + str(bltotal) + '|' + str(blHTTPS/bltotal) + '|' + str(blHTTP/bltotal) + '|' + str(Other/bltotal)
-  print(s)
+  if bltotal > 0:
+    s = 'Total|' + str(bltotal) + '|' + str(blHTTPS/bltotal) + '|' + str(blHTTP/bltotal) + '|' + str(Other/bltotal)
+    print(s)
+  else:
+    print('No Data in Range')
   print('\n')
 
 if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
@@ -186,8 +189,11 @@ if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
     wlHTTPS += HTTPS
     wlHTTP += HTTP
     wlOthers += Other
-  s = 'Total|' + str(wltotal) + '|' + str(wlHTTPS/wltotal) + '|' + str(wlHTTP/wltotal) + '|' + str(Other/wltotal)
-  print(s)
+  if wltotal > 0:
+    s = 'Total|' + str(wltotal) + '|' + str(wlHTTPS/wltotal) + '|' + str(wlHTTP/wltotal) + '|' + str(Other/wltotal)
+    print(s)
+  else:
+    print('No Data in Range\n')
   print('\n')
 
 if (sys.argv[1] == 'A'):
@@ -195,9 +201,10 @@ if (sys.argv[1] == 'A'):
   allHTTPS = blHTTPS + wlHTTPS
   allHTTP = blHTTP + wlHTTP
   allOther = blOthers + wlOthers
-  print("Overall totals\n")
-  s = 'Total|' + str(total) + '|' + str(allHTTPS/total) + '|' + str(allHTTP/total) + '|' + str(allOther/total)
-  print(s)
+  if total > 0:
+    print("Overall totals\n")
+    s = 'Total|' + str(total) + '|' + str(allHTTPS/total) + '|' + str(allHTTP/total) + '|' + str(allOther/total)
+    print(s)
   print('\n')
 
 
@@ -210,7 +217,7 @@ DSCP field values (precedence, delay, throughput, reliability, cost)
 """
 if (sys.argv[1] == 'A' or sys.argv[1] == 'B' or sys.argv[1] == 'W'):
   while True:
-    addr = input("Enter IP address for additional information, or Enter to exit:")
+    addr = input("Enter Target IP address for additional information, or Enter to exit:")
     if addr == '':
       break
     elif addr in blacklist:
@@ -218,6 +225,8 @@ if (sys.argv[1] == 'A' or sys.argv[1] == 'B' or sys.argv[1] == 'W'):
     elif addr in whitelist:
       printdetails(addr, detail)
     else:
-      print("\nInvalid input, please try again\n")
+      print("\nInvalid Target IP, please try again\n")
 else:
   print("\nExpected Commandline Input of B for blacklisted IP stats, W for whitelisted IP stats, or A for all.\n")
+  
+
