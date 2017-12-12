@@ -30,11 +30,11 @@ def updates(srcip, tarip, values, summary, detail):
   summary[srcip]['msg'] += 1
   detail[srcip][tarip]['msg'] += 1
   # protocol
-  if values[2] == 56:
+  if values[2] == '56':
     # using TLS (HTTPS)
     summary[srcip]['HTTPS'] += 1
     detail[srcip][tarip]['HTTPS'] += 1
-  elif (values[2] == 6 or values[2] == 17):
+  elif (values[2] == '6' or values[2] == '17'):
     # using TCP or UDP (HTTP)
     summary[srcip]['HTTP'] += 1
     detail[srcip][tarip]['HTTP'] += 1
@@ -43,23 +43,23 @@ def updates(srcip, tarip, values, summary, detail):
     summary[srcip]['Other'] += 1
     detail[srcip][tarip]['Other'] += 1
   # Precendence
-  if values[3] != 0:
+  if values[3] != '0':
     # Precedence is anything other than Routine
     detail[srcip][tarip]['non-routine'] += 1
   # Delay
-  if values[4] == 1:
+  if values[4] == '1':
     # Low Delay is set
     detail[srcip][tarip]['low delay'] += 1
   # Throughput
-  if values[5] == 1:
+  if values[5] == '1':
     # High Throughput is set
     detail[srcip][tarip]['high tp'] += 1
   # Reliability
-  if values[6] == 1:
+  if values[6] == '1':
     # high reliability is set
     detail[srcip][tarip]['high reliable'] += 1
   # Cost
-  if values[7] == 1:
+  if values[7] == '1':
     # minimum cost is set
     detail[srcip][tarip]['min cost'] += 1
 
@@ -81,7 +81,7 @@ def printdetails(ipaddr, detail):
      HT = detail[ipaddr][tarip]['high tp']
      HR = detail[ipaddr][tarip]['high reliable']
      MC = detail[ipaddr][tarip]['min cost']
-     s = tarip + '|' + msg + '|' + HTTPS/msg + '|' + HTTP/msg + '|' + Other/msg + '|' + NR/msg + '|' + LD/msg + '|' + HT/msg + '|' + HR/msg + '|' + MC/msg
+     s = str(tarip) + '|' + str(msg) + '|' + str(HTTPS/msg) + '|' + str(HTTP/msg) + '|' + str(Other/msg) + '|' + str(NR/msg) + '|' + str(LD/msg) + '|' + str(HT/msg) + '|' + str(HR/msg) + '|' + str(MC/msg)
      print(s)
    print('\n')
 
@@ -109,6 +109,7 @@ if (sys.argv[1] == 'B' or sys.argv[1] == 'A'):
     if srcip not in blacklist:
       blacklist.append(values[0])
       summary[srcip] = {'msg': 0, 'HTTPS': 0, 'HTTP': 0, 'Other': 0}
+      detail[srcip] = {}
     if tarip not in detail[srcip].keys():
       detail[srcip][tarip] = {'msg':0, 'HTTPS': 0, 'HTTP': 0, 'Other': 0, 'non-routine': 0, 'low delay': 0, 'high tp': 0, 'high reliable': 0, 'min cost': 0}
     # update dictionary values
@@ -123,10 +124,11 @@ if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
   for line in safe.readlines():
     values = line.split()
     srcip = values[0]
-    tarip = values[0]
+    tarip = values[1]
     if values[0] not in whitelist:
       whitelist.append(values[0])
       summary[srcip] = {'msg': 0, 'HTTPS': 0, 'HTTP': 0, 'Other': 0}
+      detail[srcip] = {}
     if tarip not in detail[srcip].keys():
       detail[srcip][tarip] = {'msg':0, 'HTTPS': 0, 'HTTP': 0, 'Other': 0, 'non-routine': 0, 'low delay': 0, 'high tp': 0, 'high reliable': 0, 'min cost': 0}
     # update dictionary values
@@ -138,47 +140,53 @@ if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
 Print cummulative statistics for blacklist, whitelist
 """
 
-if (sys.argv[1] == 'B'):
+if (sys.argv[1] == 'B' or sys.argv[1] == 'A'):
   bltotal = 0;
   blHTTPS = 0;
   blHTTP = 0;
   blOthers = 0;
   print("Statistics from blacklisted IPs\nSource IP|Source Host|# msgs|% HTTPS|% HTTP|% Other")
   for blsrcip in blacklist:
-    blsrchst = socket.gethostbyaddr(blsrcip)
+    try:
+      blsrchst = socket.gethostbyaddr(blsrcip)[0]
+    except:
+      blsrchst = "Unknown Host"
     msg = summary[blsrcip]['msg']
     HTTPS = summary[blsrcip]['HTTPS']
     HTTP = summary[blsrcip]['HTTP']
     Other = summary[blsrcip]['Other']
-    s = blscrip + '|' + blsrchst + '|' + msg + '|' + HTTPS/msg + '|' + HTTP/msg + '|' + Other/msg
+    s = str(blsrcip) + '|' + str(blsrchst) + '|' + str(msg) + '|' + str(HTTPS/msg) + '|' + str(HTTP/msg) + '|' + str(Other/msg)
     print(s)
     bltotal += msg
     blHTTPS += HTTPS
     blHTTP += HTTP
     blOthers += Other
-  s = 'Total|' + bltotal + '|' + blHTTPS/bltotal + '|'+ blHTTP/msg + '|' + Other/msg
+  s = 'Total|' + str(bltotal) + '|' + str(blHTTPS/bltotal) + '|' + str(blHTTP/bltotal) + '|' + str(Other/bltotal)
   print(s)
   print('\n')
 
-if (sys.argv[1] == 'W'):
+if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
   wltotal = 0;
   wlHTTPS = 0;
   wlHTTP = 0;
   wlOthers = 0;
   print("Statistics from whitelisted IPs\nSource IP|Source Host|# msgs|% HTTPS|% HTTP|% Other")
   for wlsrcip in whitelist:
-    wlsrchst = socket.gethostbyaddr(wlsrcip)
+    try:
+      wlsrchst = socket.gethostbyaddr(wlsrcip)[0]
+    except:
+      wlsrchst = "Unknown Host"
     msg = summary[wlsrcip]['msg']
     HTTPS = summary[wlsrcip]['HTTPS']
     HTTP = summary[wlsrcip]['HTTP']
     Other = summary[wlsrcip]['Other']
-    s = wlscrip + '|' + wlsrchst + '|' + msg + '|' + HTTPS/msg + '|' + HTTP/msg + '|' + Other/msg
+    s = str(wlsrcip) + '|' + str(wlsrchst) + '|' + str(msg) + '|' + str(HTTPS/msg) + '|' + str(HTTP/msg) + '|' + str(Other/msg)
     print(s)
     wltotal += msg
     wlHTTPS += HTTPS
     wlHTTP += HTTP
     wlOthers += Other
-  s = 'Total|' + wltotal + '|' + wlHTTPS/bltotal + '|'+ wlHTTP/msg + '|' + Other/msg
+  s = 'Total|' + str(wltotal) + '|' + str(wlHTTPS/wltotal) + '|' + str(wlHTTP/wltotal) + '|' + str(Other/wltotal)
   print(s)
   print('\n')
 
@@ -188,25 +196,28 @@ if (sys.argv[1] == 'A'):
   allHTTP = blHTTP + wlHTTP
   allOther = blOthers + wlOthers
   print("Overall totals\n")
-  s = 'Total|' + total + '|' + allHTTPS/total + '|' + allHTTP/total + '|' + allOther/total
+  s = 'Total|' + str(total) + '|' + str(allHTTPS/total) + '|' + str(allHTTP/total) + '|' + str(allOther/total)
   print(s)
   print('\n')
 
 
 """
+Assuming user entered valid input
 Prompt user for specific IP to report additional statistics:
 DestIP & resolved addr
 Protocol num (TCP,UDP,TLS, or other)
 DSCP field values (precedence, delay, throughput, reliability, cost)
 """
-
-while True:
-  addr = input("Enter IP address for additional information, or Enter to exit:")
-  if addr == '':
-    break
-  elif addr in blacklist:
-    printdetails(addr, detail)
-  elif addr in whitelist:
-    printdetails(addr, detail)
-  else:
-    print("\nInvalid input, please try again\n")
+if (sys.argv[1] == 'A' or sys.argv[1] == 'B' or sys.argv[1] == 'W'):
+  while True:
+    addr = input("Enter IP address for additional information, or Enter to exit:")
+    if addr == '':
+      break
+    elif addr in blacklist:
+      printdetails(addr, detail)
+    elif addr in whitelist:
+      printdetails(addr, detail)
+    else:
+      print("\nInvalid input, please try again\n")
+else:
+  print("\nExpected Commandline Input of B for blacklisted IP stats, W for whitelisted IP stats, or A for all.\n")
