@@ -97,6 +97,9 @@ whitelist = []
 # dictionaries to hold data
 summary = {}
 detail = {}
+# counters for messages encountered
+bltotal = 0
+wltotal = 0
 
 if (sys.argv[1] == 'B' or sys.argv[1] == 'A'):
   # open blacklist file
@@ -141,10 +144,9 @@ Print cummulative statistics for blacklist, whitelist
 """
 
 if (sys.argv[1] == 'B' or sys.argv[1] == 'A'):
-  bltotal = 0;
-  blHTTPS = 0;
-  blHTTP = 0;
-  blOthers = 0;
+  blHTTPS = 0
+  blHTTP = 0
+  blOthers = 0
   print("Statistics from blacklisted IPs\nSource IP|Source Host|# msgs|% HTTPS|% HTTP|% Other")
   for blsrcip in blacklist:
     try:
@@ -169,10 +171,9 @@ if (sys.argv[1] == 'B' or sys.argv[1] == 'A'):
   print('\n')
 
 if (sys.argv[1] == 'W' or sys.argv[1] == 'A'):
-  wltotal = 0;
-  wlHTTPS = 0;
-  wlHTTP = 0;
-  wlOthers = 0;
+  wlHTTPS = 0
+  wlHTTP = 0
+  wlOthers = 0
   print("Statistics from whitelisted IPs\nSource IP|Source Host|# msgs|% HTTPS|% HTTP|% Other")
   for wlsrcip in whitelist:
     try:
@@ -215,17 +216,19 @@ DestIP & resolved addr
 Protocol num (TCP,UDP,TLS, or other)
 DSCP field values (precedence, delay, throughput, reliability, cost)
 """
+
 if (sys.argv[1] == 'A' or sys.argv[1] == 'B' or sys.argv[1] == 'W'):
-  while True:
-    addr = input("Enter Target IP address for additional information, or Enter to exit:")
-    if addr == '':
-      break
-    elif addr in blacklist:
-      printdetails(addr, detail)
-    elif addr in whitelist:
-      printdetails(addr, detail)
-    else:
-      print("\nInvalid Target IP, please try again\n")
+  if (wltotal > 0 or bltotal > 0):
+    while True:
+      addr = input("Enter Target IP address for additional information, or Enter to exit:")
+      if addr == '':
+        break
+      elif addr in blacklist:
+        printdetails(addr, detail)
+      elif addr in whitelist:
+        printdetails(addr, detail)
+      else:
+        print("\nInvalid Target IP, please try again\n")
 else:
   print("\nExpected Commandline Input of B for blacklisted IP stats, W for whitelisted IP stats, or A for all.\n")
   
